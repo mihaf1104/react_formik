@@ -1,11 +1,13 @@
 import React from 'react';
-import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
+import { ErrorMessage, FastField, Field, Form, Formik, useFormik } from 'formik'
 import * as yup from 'yup'
-
+import PersonalField from '../components/PersonalField'
+import PersonalError from './PersonalError';
 const initialValues = {
     name: 'qasem',
     email: '',
     password: '',
+    bio: ''
 }
 const onSubmit = values => {
     console.log(values);
@@ -42,9 +44,9 @@ const Registerform = () => {
     //console.log(formik);
     return (
         <Formik
-          initialValues={initialValues}
-          onSubmit={onSubmit}
-          validationSchema={validationSchema}
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
         >
             <div className='auth_container container-fluid d-flex justify-content-center align-items-center w-100 h-100-vh p-0'>
                 <div className="row w-100 justify-content-center align-items-center">
@@ -56,18 +58,54 @@ const Registerform = () => {
                             <div className="mb-3">
                                 <label htmlFor="name" className="form-label">نام</label>
                                 <Field type="text" className="form-control" id="name" name='name' />
-                                <ErrorMessage name='name' />
+                                <ErrorMessage name='name' >
+                                    {
+                                        //error=> console.log()
+                                        // error=>{
+                                        //     return(
+                                        //         <div>
+
+                                        //         </div>
+                                        //     )
+                                        // }
+
+                                        error => <small className='text-center d-block text-danger'>{error}</small>
+                                    }
+                                </ErrorMessage>
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">ایمیل</label>
                                 <Field type="email" className="form-control" id="email" name='email' />
-                                <ErrorMessage name='email'/>
+                                <ErrorMessage name='email' component={PersonalError} />
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="password" className="form-label">رمز عبور</label>
-                                <Field type="password" className="form-control" id="password" name='password'/>
-                                <ErrorMessage name='password'/>
+                                <FastField name='password' >
+                                    {/* {({ field, form, meta }) => {
+                                        return (
+                                            <>
+                                                <input type='password' className="form-control" id="password" 
+                                                    {...field}
+                                                />
+                                                {meta.touched && meta.error ?
+                                                    <small className='text-center d-block text-danger'>{meta.error}</small> : null
+
+                                                }
+                                            </>
+                                        )
+                                    }} */}
+
+                                    {props => <PersonalField {...props} />}
+                                </FastField>
+
+                                <ErrorMessage name='password' />
                             </div>
+                            <div className="mb-3">
+                                <label htmlFor="bio" className="form-label">بیوگرافی</label>
+                                <Field type="text" className="form-control" id="bio" name='bio' as="textarea" />
+                                <ErrorMessage name='bio' />
+                            </div>
+
                             <div className='text-center w-100'>
                                 <button type="submit" className="btn btn-primary">ثبت نام</button>
                             </div>
