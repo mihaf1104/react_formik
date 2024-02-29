@@ -5,14 +5,14 @@ import PersonalError from './PersonalError';
 const FavoritsField = (props) => {
     const { form, push, remove } = props;
     const { favorits } = form.values;
-    console.log(form)
+    //console.log(form)
     return (
         <>
             <i className='fas fa-plus text-success mx-3 pointer' onClick={() => push('')}></i>
             {
                 favorits.map((f, i) => (
                     <div key={i} className='position-relative'>
-                        <FastField type="text" className="form-control" id="favorits" name={`favorits${i}`} />
+                        <FastField type="text" className="form-control" id="favorits" name={`favorits[${i}]`} />
 
                         {favorits.length > 1 ?
                             (
@@ -23,7 +23,7 @@ const FavoritsField = (props) => {
                             )
                             : null
                         }
-                        <ErrorMessage name={`favorits${i}`} />
+                        <ErrorMessage name={`favorits[${i}]`} />
                            
                            {/* {error=>  <small className='text-center d-block text-danger'>{error}</small>}
                             </ErrorMessage> */}

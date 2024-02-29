@@ -17,8 +17,12 @@ const initialValues = {
     favorits: ['']
 
 }
-const onSubmit = values => {
-    console.log(values);
+const onSubmit = (values, submitProps) => {
+    // console.log('submiting');
+    // console.log(submitProps)
+    setTimeout(() => {
+        submitProps.setSubmitting(false);
+    }, 5000);
 }
 // const validate = values => {
 //     let error = {}
@@ -55,7 +59,7 @@ const validateBio = values => {
         error = "لطفا قالب نوشتاری را رعایت کنید"
     }
 
-    console.log(values);
+    //console.log(values);
     return error;
 }
 
@@ -72,8 +76,10 @@ const Registerform = () => {
             initialValues={initialValues}
             onSubmit={onSubmit}
             validationSchema={validationSchema}
+           // validateOnMount
         >
             {formik => {
+                console.log(formik)
                 return (
                     <div className='auth_container container-fluid d-flex justify-content-center align-items-center w-100 h-100-vh p-0'>
                         <div className="row w-100 justify-content-center align-items-center">
@@ -152,6 +158,20 @@ const Registerform = () => {
                                         </FieldArray>
 
                                     </div>
+                                    <div className='text-center w-100'>
+                                        <button type="submit" className="btn btn-primary" disabled={!(formik.isValid && formik.dirty) || formik.isSubmitting}>
+                                            {formik.isSubmitting ?
+                                                (<div class="spinner-border" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>) :
+                                                "ثبت نام"
+                                            }
+
+
+                                        </button>
+                                    </div>
+
+
 
                                     <button className='btn btn-info' type='button' onClick={() => formik.validateField('bio')}>اعتبار سنجی بیوگرافی</button>
                                     <br />
@@ -161,10 +181,6 @@ const Registerform = () => {
                                     <br />
                                     <button className='btn btn-success' type='button' onClick={() => formik.setTouched({ name: true, email: true })}>تاج فرم</button>
 
-
-                                    <div className='text-center w-100'>
-                                        <button type="submit" className="btn btn-primary">ثبت نام</button>
-                                    </div>
                                 </Form>
                             </div>
                         </div>
