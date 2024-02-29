@@ -1,13 +1,21 @@
 import React from 'react';
-import { ErrorMessage, FastField, Field, Form, Formik, useFormik } from 'formik'
+import { ErrorMessage, FastField, Form, Formik, FieldArray } from 'formik'
 import * as yup from 'yup'
 import PersonalField from '../components/PersonalField'
 import PersonalError from './PersonalError';
+import FavoritsField from './favoritsField'
 const initialValues = {
     name: 'qasem',
     email: '',
     password: '',
-    bio: ''
+    bio: '',
+    address: {
+        city: '',
+        postalCode: ''
+    },
+    phone: ['', ''],
+    favorits: ['']
+
 }
 const onSubmit = values => {
     console.log(values);
@@ -31,9 +39,26 @@ const onSubmit = values => {
 const validationSchema = yup.object({
     name: yup.string().required("لطفا این قسمت را پر کنید"),
     email: yup.string().required("لطفا این قسمت را پر کنید").email("لطفا فرمت ایمیل را به درستی وارد کنید"),
-    password: yup.string().required("لطفا این قسمت را وارد کنید")
+    password: yup.string().required("لطفا این قسمت را وارد کنید"),
+    address: yup.object({
+        city: yup.string().required("لطفا این قسمت را پر کنید"),
+        postalCode: yup.string().required("لطفا این قسمت را پر کنید"),
+    }),
+    favorits: yup.array().of(yup.string().required('لطفا این قسمت را پر کنید'))
 
 })
+
+const validateBio = values => {
+    let error;
+    if (!values) { error = "اجباری" }
+    else if (!/^[\u0600-\u06FF\s0-9a-zA-Z]+$/.test(values)) {
+        error = "لطفا قالب نوشتاری را رعایت کنید"
+    }
+
+    console.log(values);
+    return error;
+}
+
 const Registerform = () => {
     // const formik = useFormik({
     //     initialValues,
@@ -48,71 +73,106 @@ const Registerform = () => {
             onSubmit={onSubmit}
             validationSchema={validationSchema}
         >
-            <div className='auth_container container-fluid d-flex justify-content-center align-items-center w-100 h-100-vh p-0'>
-                <div className="row w-100 justify-content-center align-items-center">
-                    <div className='auth_box col-11 col-md-8 col-lg-6 col-xl-4 py-4 px-3'>
-                        <Form>
-                            <h1 className='text-center'>
-                                <i className='fas fa-user-plus text-primary'></i>
-                            </h1>
-                            <div className="mb-3">
-                                <label htmlFor="name" className="form-label">نام</label>
-                                <Field type="text" className="form-control" id="name" name='name' />
-                                <ErrorMessage name='name' >
-                                    {
-                                        //error=> console.log()
-                                        // error=>{
-                                        //     return(
-                                        //         <div>
+            {formik => {
+                return (
+                    <div className='auth_container container-fluid d-flex justify-content-center align-items-center w-100 h-100-vh p-0'>
+                        <div className="row w-100 justify-content-center align-items-center">
+                            <div className='auth_box col-11 col-md-8 col-lg-6 col-xl-4 py-4 px-3'>
+                                <Form className='row'>
+                                    <h1 className='text-center'>
+                                        <i className='fas fa-user-plus text-primary'></i>
+                                    </h1>
+                                    <div className="mb-3">
+                                        <label htmlFor="name" className="form-label">نام</label>
+                                        <FastField type="text" className="form-control" id="name" name='name' />
+                                        <ErrorMessage name='name' >
+                                            {
+                                                //error=> console.log()
+                                                // error=>{
+                                                //     return(
+                                                //         <div>
 
-                                        //         </div>
-                                        //     )
-                                        // }
+                                                //         </div>
+                                                //     )
+                                                // }
 
-                                        error => <small className='text-center d-block text-danger'>{error}</small>
-                                    }
-                                </ErrorMessage>
+                                                error => <small className='text-center d-block text-danger'>{error}</small>
+                                            }
+                                        </ErrorMessage>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="email" className="form-label">ایمیل</label>
+                                        <FastField type="email" className="form-control" id="email" name='email' />
+                                        <ErrorMessage name='email' component={PersonalError} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="password" className="form-label">رمز عبور</label>
+                                        <FastField name='password' >
+                                            {/* {({ field, form, meta }) => {
+                                    return (
+                                        <>
+                                            <input type='password' className="form-control" id="password" 
+                                                {...field}
+                                            />
+                                            {meta.touched && meta.error ?
+                                                <small className='text-center d-block text-danger'>{meta.error}</small> : null
+
+                                            }
+                                        </>
+                                    )
+                                }} */}
+
+                                            {props => <PersonalField {...props} />}
+                                        </FastField>
+
+                                        <ErrorMessage name='password' />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="bio" className="form-label">بیوگرافی</label>
+                                        <FastField type="text" className="form-control" id="bio" name='bio' as="textarea"
+                                            validate={validateBio}
+                                        />
+                                        <ErrorMessage name='bio' />
+                                    </div>
+                                    <div className="mb-3 col-6">
+                                        <label htmlFor="city" className="form-label">شهر</label>
+                                        <FastField type="text" className="form-control" id="city" name='address.city' />
+                                        <ErrorMessage name='address.city' />
+                                    </div>
+                                    <div className="mb-3 col-6">
+                                        <label htmlFor="postalCode" className="form-label">کدپستی</label>
+                                        <FastField type="text" className="form-control" id="postalCode" name='address.postalCode' />
+                                        <ErrorMessage name='address.postalCode' />
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label htmlFor="postalCode" className="form-label">علایق</label>
+                                        <FieldArray type="text" className="form-control" id="favorits" name='favorits' >
+                                            {props => <FavoritsField {...props} />}
+                                        </FieldArray>
+
+                                    </div>
+
+                                    <button className='btn btn-info' type='button' onClick={() => formik.validateField('bio')}>اعتبار سنجی بیوگرافی</button>
+                                    <br />
+                                    <button className='btn btn-info' type='button' onClick={() => formik.validateForm()}>بیوگرافی فرم</button>
+                                    <br />
+                                    <button className='btn btn-success' type='button' onClick={() => formik.setFieldTouched('bio')}>تاج بیوگرافی</button>
+                                    <br />
+                                    <button className='btn btn-success' type='button' onClick={() => formik.setTouched({ name: true, email: true })}>تاج فرم</button>
+
+
+                                    <div className='text-center w-100'>
+                                        <button type="submit" className="btn btn-primary">ثبت نام</button>
+                                    </div>
+                                </Form>
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="email" className="form-label">ایمیل</label>
-                                <Field type="email" className="form-control" id="email" name='email' />
-                                <ErrorMessage name='email' component={PersonalError} />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="password" className="form-label">رمز عبور</label>
-                                <FastField name='password' >
-                                    {/* {({ field, form, meta }) => {
-                                        return (
-                                            <>
-                                                <input type='password' className="form-control" id="password" 
-                                                    {...field}
-                                                />
-                                                {meta.touched && meta.error ?
-                                                    <small className='text-center d-block text-danger'>{meta.error}</small> : null
-
-                                                }
-                                            </>
-                                        )
-                                    }} */}
-
-                                    {props => <PersonalField {...props} />}
-                                </FastField>
-
-                                <ErrorMessage name='password' />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="bio" className="form-label">بیوگرافی</label>
-                                <Field type="text" className="form-control" id="bio" name='bio' as="textarea" />
-                                <ErrorMessage name='bio' />
-                            </div>
-
-                            <div className='text-center w-100'>
-                                <button type="submit" className="btn btn-primary">ثبت نام</button>
-                            </div>
-                        </Form>
+                        </div>
                     </div>
-                </div>
-            </div>
+                )
+            }
+
+            }
         </Formik>
     );
 }
