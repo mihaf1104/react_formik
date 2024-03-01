@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import PersonalField from '../components/PersonalField'
 import PersonalError from './PersonalError';
 import FavoritsField from './favoritsField'
+import FormikControl from '../formikElements/FormikControl';
 const initialValues = {
     name: 'qasem',
     email: '',
@@ -72,14 +73,14 @@ const Registerform = () => {
     const [myValue, setMyValue] = useState(null)
 
     const handleSaveData = (formik) => {
-        localStorage.setItem('saveData', JSON.stringify(formik.values)) 
+        localStorage.setItem('saveData', JSON.stringify(formik.values))
     }
     const handleGetData = (formik) => {
-        const local=JSON.parse(localStorage.getItem('saveData'))
+        const local = JSON.parse(localStorage.getItem('saveData'))
         setMyValue(local)
-         
+
     }
-    const isMyValueFill=()=>JSON.parse(localStorage.getItem('saveData'))
+    const isMyValueFill = () => JSON.parse(localStorage.getItem('saveData'))
     // useEffect(() => {
     //     const locals = JSON.parse(localStorage.getItem('saveData')) 
     //     setSavedData(locals) 
@@ -110,63 +111,12 @@ const Registerform = () => {
                                     <h1 className='text-center'>
                                         <i className='fas fa-user-plus text-primary'></i>
                                     </h1>
-                                    <div className="mb-3">
-                                        <label htmlFor="name" className="form-label">نام</label>
-                                        <FastField type="text" className="form-control" id="name" name='name' />
-                                        <ErrorMessage name='name' >
-                                            {
-                                                //error=> console.log()
-                                                // error=>{
-                                                //     return(
-                                                //         <div>
-
-                                                //         </div>
-                                                //     )
-                                                // }
-
-                                                error => <small className='text-center d-block text-danger'>{error}</small>
-                                            }
-                                        </ErrorMessage>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="email" className="form-label">ایمیل</label>
-                                        <FastField type="email" className="form-control" id="email" name='email' />
-                                        <ErrorMessage name='email' component={PersonalError} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="password" className="form-label">رمز عبور</label>
-                                        <FastField name='password' >
-                                            {/* {({ field, form, meta }) => {
-                                    return (
-                                        <>
-                                            <input type='password' className="form-control" id="password" 
-                                                {...field}
-                                            />
-                                            {meta.touched && meta.error ?
-                                                <small className='text-center d-block text-danger'>{meta.error}</small> : null
-
-                                            }
-                                        </>
-                                    )
-                                }} */}
-
-                                            {props => <PersonalField {...props} />}
-                                        </FastField>
-
-                                        <ErrorMessage name='password' />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="bio" className="form-label">بیوگرافی</label>
-                                        <FastField type="text" className="form-control" id="bio" name='bio' as="textarea"
-                                            validate={validateBio}
-                                        />
-                                        <ErrorMessage name='bio' />
-                                    </div>
-                                    <div className="mb-3 col-6">
-                                        <label htmlFor="city" className="form-label">شهر</label>
-                                        <FastField type="text" className="form-control" id="city" name='address.city' />
-                                        <ErrorMessage name='address.city' />
-                                    </div>
+                                    <FormikControl control="input" type="text" name="name" label="نام" />
+                                    <FormikControl control="input" type="email" name="email" label="ایمیل" />
+                                    <FormikControl control="input" type="password" name="password" label="کلمه عبور" />
+                                    <FormikControl control="textArea" type="textarea" name="bio" label="بیوگرافی" />
+                                    <FormikControl control="input" type="text" name="address.city" label="شهر" />
+                                     
                                     <div className="mb-3 col-6">
                                         <label htmlFor="postalCode" className="form-label">کدپستی</label>
                                         <FastField type="text" className="form-control" id="postalCode" name='address.postalCode' />
@@ -203,8 +153,8 @@ const Registerform = () => {
 
                                     {
                                         (isMyValueFill) ?
-                                            (<button type='button' className='btn btn-warning mx-2' onClick={() => handleGetData(formik)}
-                                            >پر کردن اطلاعات</button>) : null
+                                            (<button type='button' className='btn btn-success mx-1' onClick={handleGetData}
+                                            >دریافت آخرین اطلاعات ازاین سیستم</button>) : null
                                     }
 
                                     <br />
