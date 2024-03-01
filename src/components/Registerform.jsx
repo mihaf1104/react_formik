@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorMessage, FastField, Form, Formik, FieldArray } from 'formik'
 import * as yup from 'yup'
 import PersonalField from '../components/PersonalField'
@@ -52,6 +52,8 @@ const validationSchema = yup.object({
 
 })
 
+
+
 const validateBio = values => {
     let error;
     if (!values) { error = "اجباری" }
@@ -63,7 +65,26 @@ const validateBio = values => {
     return error;
 }
 
+
+
 const Registerform = () => {
+    //const [savedData, setSavedData] = useState(null);
+    const [myValue, setMyValue] = useState(null)
+
+    const handleSaveData = (formik) => {
+        localStorage.setItem('saveData', JSON.stringify(formik.values)) 
+    }
+    const handleGetData = (formik) => {
+        const local=JSON.parse(localStorage.getItem('saveData'))
+        setMyValue(local)
+         
+    }
+    const isMyValueFill=()=>JSON.parse(localStorage.getItem('saveData'))
+    // useEffect(() => {
+    //     const locals = JSON.parse(localStorage.getItem('saveData')) 
+    //     setSavedData(locals) 
+    // }, []);
+
     // const formik = useFormik({
     //     initialValues,
     //     onSubmit,
@@ -73,13 +94,14 @@ const Registerform = () => {
     //console.log(formik);
     return (
         <Formik
-            initialValues={initialValues}
+            initialValues={myValue || initialValues}
             onSubmit={onSubmit}
             validationSchema={validationSchema}
-           // validateOnMount
+            enableReinitialize
+        // validateOnMount
         >
             {formik => {
-                console.log(formik)
+                //console.log(formik)
                 return (
                     <div className='auth_container container-fluid d-flex justify-content-center align-items-center w-100 h-100-vh p-0'>
                         <div className="row w-100 justify-content-center align-items-center">
@@ -169,10 +191,23 @@ const Registerform = () => {
 
 
                                         </button>
+                                        {
+                                            (formik.isValid && formik.dirty) ?
+                                                (<button type='button' className='btn btn-warning mx-2' onClick={() => handleSaveData(formik)}
+                                                    disabled={
+                                                        !(formik.dirty && formik.isValid)
+                                                    }
+                                                >ذخیره سازی اطلاعات</button>) : null
+                                        }
                                     </div>
 
+                                    {
+                                        (isMyValueFill) ?
+                                            (<button type='button' className='btn btn-warning mx-2' onClick={() => handleGetData(formik)}
+                                            >پر کردن اطلاعات</button>) : null
+                                    }
 
-
+                                    <br />
                                     <button className='btn btn-info' type='button' onClick={() => formik.validateField('bio')}>اعتبار سنجی بیوگرافی</button>
                                     <br />
                                     <button className='btn btn-info' type='button' onClick={() => formik.validateForm()}>بیوگرافی فرم</button>
